@@ -1,10 +1,14 @@
 package it.polito.tdp.lab04;
 
 import java.net.URL;
+import java.util.Collections;
+import java.util.List;
 import java.util.ResourceBundle;
+
 
 import it.polito.tdp.lab04.model.Corso;
 import it.polito.tdp.lab04.model.Model;
+import it.polito.tdp.lab04.model.Studente;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -17,6 +21,8 @@ import javafx.scene.input.MouseEvent;
 public class FXMLController {
 	
 	Model model;
+	
+	List<Corso> corsi;
 
     @FXML
     private ResourceBundle resources;
@@ -61,7 +67,33 @@ public class FXMLController {
 
     @FXML
     void cercaIscrittiCorso(ActionEvent event) {
-
+    	txtResult.clear();
+		txtNome.clear();
+		txtCognome.clear();
+		
+    	Corso corso = choiceBox.getValue();
+    	
+    	if(corso == null) {
+    		txtResult.appendText("Scegli un corso!");
+    		return;
+    	}
+    	
+    	List<Studente> studenti = model.studentiIscrittiAlCorso(corso);
+    	
+//    	StringBuilder sb = new StringBuilder();
+    	
+    	for (Studente s : studenti) {
+    		txtResult.appendText(s.toString() +"\n");
+    		/*
+     			sb.append(String.format("%-10s ", s.getMatricola()));
+    			sb.append(String.format("%-20s", s.getNome()));
+    			sb.append(String.format("%-20s ", s.getCognome()));
+				sb.append(String.format("%-10s ", s.getCds()));
+    			sb.append("\n");
+    		*/
+    	}
+    
+//    	txtResult.appendText(sb.toString());
     }
 
     @FXML
@@ -76,7 +108,13 @@ public class FXMLController {
 
     @FXML
     void doReset(ActionEvent event) {
-
+    	txtCognome.clear();
+    	txtNome.clear();
+    	txtMatricola.clear();
+    	txtResult.clear();
+    	
+    	//resetta anche la selezione del menu 
+    	choiceBox.getSelectionModel().clearSelection();
     }
 
     @FXML
@@ -103,9 +141,12 @@ public class FXMLController {
 		this.model=model;
 		
 		//Richiamo metodo dal model che recupera i corsi, salvandoli in una lista
+		corsi= model.listaTuttiCorsi();
 		
 		//Ordino la lista alfabeticamente
+		Collections.sort(corsi);
 		
 		//popolo la choiseBox con la lista appena ottenuta
+		choiceBox.getItems().addAll(corsi);
 	}
 }
