@@ -5,9 +5,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
-
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
+import it.polito.tdp.lab04.model.Corso;
 import it.polito.tdp.lab04.model.Studente;
 
 
@@ -91,5 +93,42 @@ public class StudenteDAO {
 		}
 		
 		return studenti;
+	}
+	
+	/*
+	 * Dato uno studente, ottengo i corsi a cui è iscritto
+	 */
+	public List<Corso> getCorsiDatoStudente(int matricola) {
+		
+		final String sql = "SELECT * FROM iscrizione, corso WHERE iscrizione.codins = corso.codins AND iscrizione.matricola=?";
+		
+		List<Corso> corsiFromStudente = new LinkedList<Corso>();
+		
+		try {
+			Connection conn = ConnectDB.getConnection();
+			PreparedStatement st = conn.prepareStatement(sql);
+
+			st.setInt(1, matricola);
+			
+			ResultSet rs = st.executeQuery();
+
+
+			while (rs.next()) {
+
+				String codins = rs.getString("codins");
+				int numeroCrediti = rs.getInt("crediti");
+				String nome = rs.getString("nome");
+				int periodoDidattico = rs.getInt("pd");
+				
+				Corso c = new Corso(codins, numeroCrediti, nome, periodoDidattico);
+				corsiFromStudente.add(c);
+			}
+			conn.close();
+		} catch (SQLException e) {
+			// e.printStackTrace();
+			throw new RuntimeException("Errore Db", e);
+		}
+		return corsiFromStudente;
+		
 	}
 }

@@ -64,7 +64,37 @@ public class FXMLController {
 
     @FXML
     void cercaCorsi(ActionEvent event) {
-
+    	txtResult.clear();
+    	
+    	try {
+    	String input = txtMatricola.getText();
+    	if(input==null || input.length()==0) {
+    		txtResult.setText("Inserire una matricola!");
+    		return;
+    	}
+    	
+    	int matricola = Integer.parseInt(input);
+    	
+    	Studente s = model.getStudente(matricola);
+    	if(s==null ) {
+    		txtResult.setText("Lo matricola non esiste");
+    		return;
+    	}
+    	List<Corso> corsiFromStudente = model.getCorsiDatoStudente(matricola);
+    	
+    	for(Corso c : corsiFromStudente) {
+    		if(corsiFromStudente.isEmpty()) {
+        		txtResult.setText("Lo studente non è iscritto ad alcun corso");
+        	}
+    		
+    		txtResult.appendText(c.toString()+"\n");
+    	}
+ 
+    	} catch (NumberFormatException e) {
+			txtResult.setText("Inserire una matricola nel formato corretto.");
+		} catch (RuntimeException e) {
+			txtResult.setText("ERRORE DI CONNESSIONE AL DATABASE!");
+		}
     }
 
     @FXML
@@ -136,8 +166,11 @@ public class FXMLController {
     	}
     }
     catch (NumberFormatException e) {
-    		
-    } 	
+		txtResult.setText("Inserire una matricola nel formato corretto");
+    } catch (RuntimeException e) {
+    	txtResult.setText("ERRORE DI CONNESSIONE AL DATABASE!");
+}
+    
     }
     
     @FXML
@@ -181,6 +214,8 @@ public class FXMLController {
 
 	public void setModel(Model model) {
 		this.model=model;
+		
+		txtResult.setEditable(false);
 		
 		//Richiamo metodo dal model che recupera i corsi, salvandoli in una lista
 		corsi= model.listaTuttiCorsi();

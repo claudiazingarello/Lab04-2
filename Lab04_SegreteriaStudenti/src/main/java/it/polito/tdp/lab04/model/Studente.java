@@ -1,10 +1,8 @@
 package it.polito.tdp.lab04.model;
 
 public class Studente {
-	//*************CAMBIATA CLASSE STUDENTE CON INT
 	
-	
-	//Inserisco come variabili le colonne della tabella Studente
+//	Inserisco come variabili le colonne della tabella Studente
 	private int matricola;
 	private String cognome;
 	private String nome;
@@ -74,7 +72,11 @@ public class Studente {
 
 	@Override
 	public String toString() {
-		return String.format("Studente: matricola=%s, cognome=%s, nome=%s, cds=%s", matricola, cognome, nome, cds);
+		String c = String.format("%-40s", cognome);
+		String n = String.format("%-40s", nome);
+		String m = String.format("%-40s", matricola);
+		
+		return c+n+m+n;
 	}
 	
 	

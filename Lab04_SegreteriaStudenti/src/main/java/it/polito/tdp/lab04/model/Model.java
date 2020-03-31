@@ -42,4 +42,12 @@ public class Model {
 	public Map<Integer, Studente> getTuttiGliStudenti() {
 		return studenteDao.getTuttiGliStudenti();
 	}
+	
+	public List<Corso> getCorsiDatoStudente(int matricola) {
+		return studenteDao.getCorsiDatoStudente(matricola);
+	}
+	
+	public boolean inscriviStudenteACorso(Studente studente, Corso corso) {
+		return corsoDao.inscriviStudenteACorso(studente, corso);
+	}
 }
