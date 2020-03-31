@@ -1,7 +1,7 @@
 package it.polito.tdp.lab04.model;
 
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import it.polito.tdp.lab04.DAO.CorsoDAO;
 import it.polito.tdp.lab04.DAO.StudenteDAO;
@@ -25,8 +25,21 @@ public class Model {
 		return corsoDao.getTuttiICorsi();
 	}
 	
-	public List<Studente> studentiIscrittiAlCorso(Corso c){
-		return corsoDao.getStudentiIscrittiAlCorso(c);
-		
+	public void studentiIscrittiAlCorso(Corso c){
+		corsoDao.getStudentiIscrittiAlCorso(c);	
+	}
+	
+	//****************************
+	public List<Studente> studentiInscrittiAlCorso(Corso c){
+		return corsoDao.getStudentiInscrittiAlCorso(c);	
+	}
+	//*****************
+
+	public Studente getStudente(int matricola) {
+		return studenteDao.getStudente(matricola);
+	}
+	
+	public Map<Integer, Studente> getTuttiGliStudenti() {
+		return studenteDao.getTuttiGliStudenti();
 	}
 }

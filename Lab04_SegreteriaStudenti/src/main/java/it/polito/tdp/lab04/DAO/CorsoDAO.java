@@ -97,7 +97,8 @@ public class CorsoDAO {
 	/*
 	 * Ottengo tutti gli studenti iscritti al Corso
 	 */
-	public List<Studente> getStudentiIscrittiAlCorso(Corso corso) {
+
+	public void getStudentiIscrittiAlCorso(Corso corso) {
 		
 		final String sql = "SELECT * from studente as s, iscrizione as i where s.matricola = i.matricola AND i.codins = ?";
 		
@@ -113,7 +114,8 @@ public class CorsoDAO {
 
 			while (rs.next()) {
 
-				String matricola = rs.getString("matricola");
+				//***********HO MESSO INT AL POSTO DI STRING
+				int matricola = rs.getInt("matricola");
 				String nome = rs.getString("nome");
 				String cognome = rs.getString("cognome");
 				String cds = rs.getString("CDS");
@@ -121,7 +123,7 @@ public class CorsoDAO {
 				Studente s = new Studente(matricola, nome, cognome, cds);
 				studentiIscrittiAlCorso.add(s);
 
-				System.out.println(matricola + " " + nome + " " + cognome + " " + cds);
+				System.out.println(matricola + " " + cognome + " " + nome + " " + cds);
 			}
 
 			conn.close();
@@ -129,7 +131,7 @@ public class CorsoDAO {
 			// e.printStackTrace();
 			throw new RuntimeException("Errore Db", e);
 		}
-		return studentiIscrittiAlCorso;
+		
 	}
 
 	/*
@@ -141,4 +143,42 @@ public class CorsoDAO {
 		return false;
 	}
 
+	//********** METODO CHE RITORNA LISTA AL POSTO DI VOID (FATTO DA ME)
+	
+	public List<Studente> getStudentiInscrittiAlCorso(Corso corso) {
+		
+		final String sql = "SELECT * from studente as s, iscrizione as i where s.matricola = i.matricola AND i.codins = ?";
+		
+		List<Studente> studentiIscrittiAlCorso = new LinkedList<Studente>();
+		try {
+			Connection conn = ConnectDB.getConnection();
+			PreparedStatement st = conn.prepareStatement(sql);
+
+			st.setString(1, corso.getCodins());
+			
+			ResultSet rs = st.executeQuery();
+
+
+			while (rs.next()) {
+
+				int matricola = rs.getInt("matricola");
+				String nome = rs.getString("nome");
+				String cognome = rs.getString("cognome");
+				String cds = rs.getString("CDS");
+				
+				Studente s = new Studente(matricola, cognome, nome, cds);
+				studentiIscrittiAlCorso.add(s);
+
+				System.out.println(matricola + " " + cognome + " " + nome + " " + cds);
+			}
+
+			conn.close();
+		} catch (SQLException e) {
+			// e.printStackTrace();
+			throw new RuntimeException("Errore Db", e);
+		}
+		return studentiIscrittiAlCorso;
+	}
+
+	
 }

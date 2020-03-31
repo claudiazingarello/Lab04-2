@@ -3,6 +3,7 @@ package it.polito.tdp.lab04;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 
@@ -23,6 +24,7 @@ public class FXMLController {
 	Model model;
 	
 	List<Corso> corsi;
+	Map<Integer, Studente> studenti;
 
     @FXML
     private ResourceBundle resources;
@@ -78,7 +80,7 @@ public class FXMLController {
     		return;
     	}
     	
-    	List<Studente> studenti = model.studentiIscrittiAlCorso(corso);
+    	List<Studente> studenti = model.studentiInscrittiAlCorso(corso);
     	
 //    	StringBuilder sb = new StringBuilder();
     	
@@ -96,11 +98,48 @@ public class FXMLController {
 //    	txtResult.appendText(sb.toString());
     }
 
+    /*
+     * Metodo che entra in gioco quando premiamo sulla spunta
+     */
     @FXML
     void doCheck(ActionEvent event) {
-
+    	
+    	//Quando il flag diventa 'true' abbiamo trovato una corrispondenza
+    	// Altrimenti se alla fine è 'false' non c'è corrispondenza e riportiamo msg di errore
+    	boolean flag = false;
+    	
+    	String input = txtMatricola.getText();
+    	if(input == null || input.length()==0 ) {
+    		txtResult.setText("Devi inserire una matricola!");
+    		checkBox.setSelected(false);
+    		return;
+    	}
+    	
+    try {
+    	int matricola = Integer.parseInt(input);
+    	Map<Integer, Studente> studenti = model.getTuttiGliStudenti();
+    	
+    	//itero la mappa sulle chiavi (matricola)
+    	for (Integer m : studenti.keySet()) {
+    		//se la mappa contiene la matricola inserita
+    		if(m == matricola) {
+    			flag = true;
+    			//creo oggetto studente, corrispondente a quella matricola (valore della mappa)
+    			Studente s = studenti.get(matricola);
+    			txtNome.setText(s.getNome());
+    			txtCognome.setText(s.getCognome());
+    		}
+    	}
+    	if(flag == false) {
+    		checkBox.setSelected(false);
+    		txtResult.setText("Non è stata trovata alcuna corrispondenza con la matricola inserita!");
+    	}
     }
-
+    catch (NumberFormatException e) {
+    		
+    } 	
+    }
+    
     @FXML
     void doIscrivi(ActionEvent event) {
 
@@ -115,6 +154,9 @@ public class FXMLController {
     	
     	//resetta anche la selezione del menu 
     	choiceBox.getSelectionModel().clearSelection();
+    	
+    	//Elimina il check alla checkbox
+    	checkBox.setSelected(false);
     }
 
     @FXML
