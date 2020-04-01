@@ -11,7 +11,7 @@ import it.polito.tdp.lab04.model.Corso;
 import it.polito.tdp.lab04.model.Studente;
 
 public class CorsoDAO {
-	
+
 	/*
 	 * Ottengo tutti i corsi salvati nel Db
 	 */
@@ -38,35 +38,35 @@ public class CorsoDAO {
 
 				// Crea un nuovo JAVA Bean Corso
 				// Aggiungi il nuovo oggetto Corso alla lista corsi
-				
+
 				Corso c = new Corso(codins, numeroCrediti, nome, periodoDidattico);
 				corsi.add(c);
 			}
 
 			conn.close();
-			
+
 			return corsi;
-			
+
 
 		} catch (SQLException e) {
 			// e.printStackTrace();
 			throw new RuntimeException("Errore Db", e);
 		}
 	}
-	
-	
+
+
 	/*
 	 * Dato un codice insegnamento, ottengo il corso
 	 */
 	public void getCorso(Corso corso) {
-		
+
 		final String sql = "select * from corso where codins = ?";
 		try {
 			Connection conn = ConnectDB.getConnection();
 			PreparedStatement st = conn.prepareStatement(sql);
 
 			st.setString(1, corso.getCodins());
-			
+
 			ResultSet rs = st.executeQuery();
 
 
@@ -76,12 +76,12 @@ public class CorsoDAO {
 				int numeroCrediti = rs.getInt("crediti");
 				String nome = rs.getString("nome");
 				int periodoDidattico = rs.getInt("pd");
-				
+
 				corso.setCodins(codins);
 				corso.setCrediti(numeroCrediti);
 				corso.setNome(nome);
 				corso.setPd(periodoDidattico);
-				
+
 
 				System.out.println(codins + " " + numeroCrediti + " " + nome + " " + periodoDidattico);
 			}
@@ -91,7 +91,7 @@ public class CorsoDAO {
 			// e.printStackTrace();
 			throw new RuntimeException("Errore Db", e);
 		}
-		
+
 	}
 
 	/*
@@ -99,16 +99,16 @@ public class CorsoDAO {
 	 */
 
 	public void getStudentiIscrittiAlCorso(Corso corso) {
-		
+
 		final String sql = "SELECT * from studente as s, iscrizione as i where s.matricola = i.matricola AND i.codins = ?";
-		
+
 		List<Studente> studentiIscrittiAlCorso = new LinkedList<Studente>();
 		try {
 			Connection conn = ConnectDB.getConnection();
 			PreparedStatement st = conn.prepareStatement(sql);
 
 			st.setString(1, corso.getCodins());
-			
+
 			ResultSet rs = st.executeQuery();
 
 
@@ -119,7 +119,7 @@ public class CorsoDAO {
 				String nome = rs.getString("nome");
 				String cognome = rs.getString("cognome");
 				String cds = rs.getString("CDS");
-				
+
 				Studente s = new Studente(matricola, nome, cognome, cds);
 				studentiIscrittiAlCorso.add(s);
 
@@ -131,31 +131,50 @@ public class CorsoDAO {
 			// e.printStackTrace();
 			throw new RuntimeException("Errore Db", e);
 		}
-		
+
 	}
 
 	/*
 	 * Data una matricola ed il codice insegnamento, iscrivi lo studente al corso.
 	 */
 	public boolean inscriviStudenteACorso(Studente studente, Corso corso) {
+		String sql = "INSERT IGNORE INTO 'iscritticorsi'.'iscrizione' ('matricola', 'codins') VALUES(?,?)";
+		boolean returnValue = false;
 		
-		// ritorna true se l'iscrizione e' avvenuta con successo
-		return false;
+		try {
+			Connection conn = ConnectDB.getConnection();
+			PreparedStatement st = conn.prepareStatement(sql);
+			st.setInt(1, studente.getMatricola());
+			st.setString(2, corso.getCodins());
+			
+			int res = st.executeUpdate();	
+
+			if (res == 1)
+				returnValue = true;
+
+			conn.close();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new RuntimeException("Errore Db", e);
+		}
+		
+		return returnValue;
 	}
 
 	//********** METODO CHE RITORNA LISTA AL POSTO DI VOID (FATTO DA ME)
-	
+
 	public List<Studente> getStudentiInscrittiAlCorso(Corso corso) {
-		
+
 		final String sql = "SELECT * from studente as s, iscrizione as i where s.matricola = i.matricola AND i.codins = ?";
-		
+
 		List<Studente> studentiIscrittiAlCorso = new LinkedList<Studente>();
 		try {
 			Connection conn = ConnectDB.getConnection();
 			PreparedStatement st = conn.prepareStatement(sql);
 
 			st.setString(1, corso.getCodins());
-			
+
 			ResultSet rs = st.executeQuery();
 
 
@@ -165,7 +184,7 @@ public class CorsoDAO {
 				String nome = rs.getString("nome");
 				String cognome = rs.getString("cognome");
 				String cds = rs.getString("CDS");
-				
+
 				Studente s = new Studente(matricola, cognome, nome, cds);
 				studentiIscrittiAlCorso.add(s);
 
@@ -180,5 +199,5 @@ public class CorsoDAO {
 		return studentiIscrittiAlCorso;
 	}
 
-	
+
 }

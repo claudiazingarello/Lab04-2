@@ -77,7 +77,7 @@ public class Corso implements Comparable<Corso> {
 
 	@Override
 	public String toString() {
-		return String.format("%s, crediti=%s, periodo didattico=%s, codice=%s", nome, crediti, pd, codins);
+		return String.format("%s", nome);
 	}
 
 	@Override

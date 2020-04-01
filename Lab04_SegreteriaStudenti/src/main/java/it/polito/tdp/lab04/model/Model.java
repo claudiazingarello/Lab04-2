@@ -50,4 +50,9 @@ public class Model {
 	public boolean inscriviStudenteACorso(Studente studente, Corso corso) {
 		return corsoDao.inscriviStudenteACorso(studente, corso);
 	}
+
+	public boolean isIscrittoACorso(Studente s, Corso c) {
+		return studenteDao.isIscrittoACorso(s, c);
+	}
+
 }
